@@ -1,30 +1,65 @@
 var cheerio = require("cheerio")
 var axios = require("axios")
-
+var db = require("../models")
 function apiRoutes(app) {
 
     app.get("/scrape", function (req, res) {
-        axios.get("http://nashvilleguru.com/").then(function (response) {
-            var $ = cheerio.load(response.data)
-            console.log($)
+        axios.get("http://nashvilleguru.com/").then(function (result) {
+            var $ = cheerio.load(result.data)
+            //  console.log($)
+            var articles = {}
+
             $("div.hundred").each(function (i, element) {
                 var section = $(this).children("h1").find("a").text()
+                var title = $(this).find("div.article-container").find("a").text()
+                var link = $(this).find("div.article-container").find("h2").find("a").attr("href")
+                console.log("section:", section)
+                console.log("title:", title)
+                console.log("link:", link)
+                console.log("-------")
 
-                console.log(section)
+                // condition to push to the array in mongodb
+                if (section != undefined && title != undefined && link != undefined) {
+                    db.Article.create({
+                        section: section,
+                        title: title,
+                        link: link
+                    })
+                }
             })
 
-            $("div.article-container").each(function (i, element) {
-                var title = $(this).children("h2").find("a").text()
+            // $("div.article-container").each(function (i, element) {
+            //     var title = $(this).children("h2").find("a").text()
 
-                console.log(title)
-            })
+            //     console.log(title)
+            // })
 
-            $("div.article-container").each(function (i, element) {
-                var link = $(this).children("h2").find("a").attr("href")
+            // $("div.article-container").each(function (i, element) {
+            //     var link = $(this).children("h2").find("a").attr("href")
 
-                console.log(link)
-            })
+            //     console.log(link)
+            // })
             res.send("scrape complete")
+        })
+
+    })
+
+    app.get("/api/articles",function(req,res) {
+        db.Article.find().then(function(result){
+            res.json(result)
+        })
+    })
+
+    app.put("/api/articles/:id", function(req, res) {
+        db.Article.update({_id:req.params.id}, {saved:true}).then(function(result){
+            res.json(result)
+        })
+    })
+
+    app.get("/",function(req,res) {
+        db.Article.find().then(function(result){
+            console.log(result)
+            res.render("index",{articlesData:result})
         })
     })
 }
