@@ -57,9 +57,19 @@ function apiRoutes(app) {
     })
 
     app.get("/",function(req,res) {
-        db.Article.find().then(function(result){
+        db.Article.find({}).then(function(result){
             console.log(result)
-            res.render("index",{articlesData:result})
+            var newResults=[]
+
+            for(var i=0;i<result.length;i++){
+                newResults.push({
+                    title: result[i].title,
+                    section: result[i].section,
+                    link:result[i].link
+                })
+            }
+
+            res.render("index",{articlesData:newResults})
         })
     })
 }
