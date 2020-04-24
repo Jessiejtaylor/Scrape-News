@@ -4,15 +4,15 @@ var db = require("../models")
 function apiRoutes(app) {
 
     app.get("/scrape", function (req, res) {
-        axios.get("http://nashvilleguru.com/").then(function (result) {
+        axios.get("http://nashvilleguru.com/best-nashville-happy-hours-and-specials").then(function (result) {
             var $ = cheerio.load(result.data)
             //  console.log($)
             var articles = {}
 
-            $("div.hundred").each(function (i, element) {
-                var section = $(this).children("h1").find("a").text()
-                var title = $(this).find("div.article-container").find("a").text()
-                var link = $(this).find("div.article-container").find("h2").find("a").attr("href")
+            $("div.sub-section").each(function (i, element) {
+                var section = $(this).children("h3").text()
+                var title = $(this).find("div.basic-container").find("a").text()
+                var link = $(this).find("div.basic-container").find("a").attr("href")
                 console.log("section:", section)
                 console.log("title:", title)
                 console.log("link:", link)
@@ -44,32 +44,32 @@ function apiRoutes(app) {
 
     })
 
-    app.get("/api/articles",function(req,res) {
-        db.Article.find().then(function(result){
+    app.get("/api/articles", function (req, res) {
+        db.Article.find().then(function (result) {
             res.json(result)
         })
     })
 
-    app.put("/api/articles/:id", function(req, res) {
-        db.Article.update({_id:req.params.id}, {saved:true}).then(function(result){
+    app.put("/api/articles/:id", function (req, res) {
+        db.Article.update({ _id: req.params.id }, { saved: true }).then(function (result) {
             res.json(result)
         })
     })
 
-    app.get("/",function(req,res) {
-        db.Article.find({}).then(function(result){
+    app.get("/", function (req, res) {
+        db.Article.find({}).then(function (result) {
             console.log(result)
-            var newResults=[]
+            var newResults = []
 
-            for(var i=0;i<result.length;i++){
+            for (var i = 0; i < result.length; i++) {
                 newResults.push({
                     title: result[i].title,
                     section: result[i].section,
-                    link:result[i].link
+                    link: result[i].link
                 })
             }
 
-            res.render("index",{articlesData:newResults})
+            res.render("index", { articlesData: newResults })
         })
     })
 }
