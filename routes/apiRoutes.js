@@ -4,44 +4,50 @@ var db = require("../models")
 function apiRoutes(app) {
 
     app.get("/scrape", function (req, res) {
-        axios.get("http://nashvilleguru.com/best-nashville-happy-hours-and-specials").then(function (result) {
+        axios.get("https://www.nashvillescene.com/news").then(function (result) {
             var $ = cheerio.load(result.data)
             //  console.log($)
-            var articles = {}
+            var articles = []
 
-            $("div.sub-section").each(function (i, element) {
-                var section = $(this).children("h3").text()
-                var title = $(this).find("div.basic-container").find("a").text()
-                var link = $(this).find("div.basic-container").find("a").attr("href")
-                console.log("section:", section)
-                console.log("title:", title)
-                console.log("link:", link)
-                console.log("-------")
+            $("div.element").each(function (i, element) {
+                var title = $(element).find("a").text().trim()
+                var summary = $(element).find("span").text().trim()
+                var link = $(element).find("a").attr("href")
+                // console.log("title:", title)
+                // console.log("summary:", summary)
+                // console.log("link:", link)
+                // console.log("-------")
+
+                // articles.push({
+                //     title,
+                //     summary,
+                //     link
+                // })
 
                 // condition to push to the array in mongodb
-                if (section != undefined && title != undefined && link != undefined) {
-                    db.Article.create({
-                        section: section,
-                        title: title,
-                        link: link
-                    })
-                }
+                // if (title != undefined && summary != undefined && link != undefined) {
+                // db.Article.create({
+                //     title: title,
+                //     summary: summary,
+                //     link: link
+                // })
+                // }
             })
-
-            // $("div.article-container").each(function (i, element) {
-            //     var title = $(this).children("h2").find("a").text()
-
-            //     console.log(title)
-            // })
-
-            // $("div.article-container").each(function (i, element) {
-            //     var link = $(this).children("h2").find("a").attr("href")
-
-            //     console.log(link)
-            // })
-            res.send("scrape complete")
+            console.log(articles)
+            res.send("scrape completed")
         })
 
+    })
+
+    app.put("/scrape", function (req, res) {
+        for (let i = 0; i < articles.length; i++) {
+            db.Article.create({
+                title: title[i],
+                summary: summary[i],
+                link: link[i]
+            })
+
+        }
     })
 
     app.get("/api/articles", function (req, res) {
@@ -54,6 +60,7 @@ function apiRoutes(app) {
         db.Article.update({ _id: req.params.id }, { saved: true }).then(function (result) {
             res.json(result)
         })
+
     })
 
     app.get("/", function (req, res) {
@@ -64,7 +71,7 @@ function apiRoutes(app) {
             for (var i = 0; i < result.length; i++) {
                 newResults.push({
                     title: result[i].title,
-                    section: result[i].section,
+                    summary: result[i].summary,
                     link: result[i].link
                 })
             }
