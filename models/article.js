@@ -1,10 +1,11 @@
 var mongoose = require("mongoose")
 var Schema = mongoose.Schema
-var articleSchema = new Schema ({
-    section: {type: String, required: true},
-    title: {type: String, required: true},
-    link: {type: String, required: true},
-    saved: {type: Boolean, default: false}
+var articleSchema = new Schema({
+    title: { type: String },
+    summary: { type: String },
+    link: { type: String },
+    image: { type: String },
+    saved: { type: Boolean, default: false }
 
 })
 

@@ -9,28 +9,31 @@ function apiRoutes(app) {
             //  console.log($)
             var articles = []
 
-            $("div.element").each(function (i, element) {
-                var title = $(element).find("a").text().trim()
-                var summary = $(element).find("span").text().trim()
-                var link = $(element).find("a").attr("href")
+            $("div.item").each(function (i, element) {
+                var title = $(this).children("div.element").children("div.element").find("a").find("h3").text().trim()
+                var summary = $(this).children("div.element").children("div.element").find("span.value").text().trim()
+                var link = $(this).children("div.element").children("div.element").find("a").attr("href")
+                var image = $(this).children("div.element").children("div.element").children("a").find("img.img-responsive").attr("data-bvo-src")
                 // console.log("title:", title)
                 // console.log("summary:", summary)
                 // console.log("link:", link)
                 // console.log("-------")
 
-                // articles.push({
-                //     title,
-                //     summary,
-                //     link
-                // })
+                articles.push({
+                    title,
+                    summary,
+                    link,
+                    image
+                })
 
                 // condition to push to the array in mongodb
                 // if (title != undefined && summary != undefined && link != undefined) {
-                // db.Article.create({
-                //     title: title,
-                //     summary: summary,
-                //     link: link
-                // })
+                db.Article.create({
+                    title: title,
+                    summary: summary,
+                    link: link,
+                    image: image
+                })
                 // }
             })
             console.log(articles)
@@ -39,16 +42,16 @@ function apiRoutes(app) {
 
     })
 
-    app.put("/scrape", function (req, res) {
-        for (let i = 0; i < articles.length; i++) {
-            db.Article.create({
-                title: title[i],
-                summary: summary[i],
-                link: link[i]
-            })
+    // app.put("/scrape", function (req, res) {
+    //     for (let i = 0; i < articles.length; i++) {
+    //         db.Article.create({
+    //             title: title[i],
+    //             summary: summary[i],
+    //             link: link[i]
+    //         })
 
-        }
-    })
+    //     }
+    // })
 
     app.get("/api/articles", function (req, res) {
         db.Article.find().then(function (result) {
