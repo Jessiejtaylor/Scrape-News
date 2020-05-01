@@ -1,4 +1,4 @@
-.btn {
+.btn, .removeBtn {
     background: lightblue;
     color: blue;
     border-radius: 350%;
@@ -18,3 +18,4 @@
     margin: 0px 0px 0px 10px;
 
 }
+
