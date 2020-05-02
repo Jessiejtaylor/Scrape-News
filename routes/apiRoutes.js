@@ -83,8 +83,23 @@ function apiRoutes(app) {
 
     app.get("/", function (req, res) {
         db.Article.find({ saved: false }).then(function (result) {
+            // router.get("/index", function(req, res) {
+            //     db.Articles.find({}).lean()
+            //     .populate("comments")
+            //     .then(function(data) {    
+            //       var results = {articles: data}
+            //       res.render("index", results);
+            //     })
+            //     .catch(function(err) {
+            //       // If an error occurred, send it to the client
+            //       console.log("error fetching articles")
+            //       res.json(err);
+            //     });
+            // });
+            
             console.log(result)
             var newResults = []
+
 
             for (var i = 0; i < result.length; i++) {
                 newResults.push({
@@ -97,6 +112,7 @@ function apiRoutes(app) {
 
             res.render("index", { articlesData: newResults })
         })
+       
     })
     app.get("/saved", function (req, res) {
         db.Article.find({ saved: true }).then(function (result) {
