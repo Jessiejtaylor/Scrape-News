@@ -1,7 +1,13 @@
 var cheerio = require("cheerio")
 var axios = require("axios")
 var db = require("../models")
+
+var Comment = require("../models/Comment.js");
+var Article = require("../models/article.js");
+
 function apiRoutes(app) {
+
+
 
     app.get("/scrape", function (req, res) {
         db.Article.remove({}).then(function (result) {
@@ -109,7 +115,116 @@ function apiRoutes(app) {
             res.render("savedArticles", { articlesData: newResults })
         })
     })
+    // jessies notes trial code from video
 
+    app.post("/comment/:id", function (req, res) {
+
+        var content = req.body.comment;
+        var articleId = req.params.id;
+
+        var commentObj = {
+
+            body: content
+        };
+
+        var newComment = new Comment(commentObj);
+
+        newComment.save(function (err, doc) {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log(doc._id);
+                console.log(articleId);
+
+                Article.findOneAndUpdate(
+                    { _id: req.params.id },
+                    { $push: { comment: doc._id } },
+                    { new: true }
+
+                ).exec(function (err, doc) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        res.redirect("/savedArticle/" + articleId);
+                    }
+                });
+            }
+        });
+    });
+    // end jessies notes from video
+
+    // // jessies trial code from github
+    //     app.get("/api/notes/:id", (req, res) => {
+    //         const id = req.params.id;
+    //         db.Article.findById(id)
+    //             .populate("notes")
+    //             .then(results => {
+    //                 let renderObj = { id: id, notes: results.notes, layout: false };
+    //                 res.render("notes", renderObj);
+    //             })
+    //             .catch(error => res.json(error));
+    //     });
+
+    //     app.post("/api/notes/add/:id", (req, res) => {
+    //         const id = req.params.id;
+    //         const options = {
+    //             new: true,
+    //             runValidators: true
+    //         };
+
+    //         db.Article.create(req.body)
+    //             .then(results =>
+    //                 db.Article.findByIdAndUpdate(id, { $push: { notes: results._id } }, options))
+    //             .then(results => res.json(results))
+    //             .catch(error => res.json(error));
+    //     });
+
+    //     app.put("/api/update", (req, res) => {
+    //         const id = req.body.id;
+    //         const update = { saved: req.body.saved };
+    //         const options = {
+    //             new: true,
+    //             runValidators: true
+    //         };
+
+    //         db.Article.findByIdAndUpdate(id, update, options)
+    //             .then((error, result) => {
+    //                 let response = { id: id };
+
+    //                 error ? response.error = `Error occurred`
+    //                     : response.message = `Headline save status updated`;
+
+    //                 res.json(response);
+    //             })
+    //     });
+
+    //     app.delete("/api/delete", (req, res) => {
+    //         const id = req.body.id;
+
+    //         db.Article.findByIdAndRemove(id)
+    //             .then((error, result) => {
+    //                 let response = { id: id };
+
+    //                 error ? response.error = `Error occurred`
+    //                     : response.message = `Headline deleted`;
+
+    //                 res.json(response);
+    //             });
+    //     });
+
+    //     app.delete("/api/notes/delete", (req, res) => {
+    //         const id = req.body.id;
+
+    //         db.Article.findByIdAndRemove(id)
+    //             .then((error, result) => {
+    //                 let response = { id: id };
+
+    //                 error ? response.error = `Error occurred`
+    //                     : response.message = `Note deleted`;
+
+    //                 res.json(response);
+    //             });
+    //     });
 
 
 }
