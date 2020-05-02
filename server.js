@@ -22,5 +22,5 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/scrape_newsdb")
 
 app.listen(port, function () {
     console.log("app is listening http://localhost:" + port)
-    console.log(process.env.PORT)
+    console.log(server.address().port)
 })
