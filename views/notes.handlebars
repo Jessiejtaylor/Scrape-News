@@ -1,0 +1,80 @@
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<link rel="stylesheet" href="./css/style.css">
+
+{{!-- jessies code from video --}}
+<div class="row">
+    <h3 class="card">{{title}}</h3>
+    <h5 class="card-panel articleBody">{{body}}</h5>
+</div>
+
+<div class="row">
+    <div class="col s2"></div>
+    <form action="/comment/{{article._id}}" method="POST" class="card-panel col s8">
+        <h5>Comment on this Article</h5>
+        <div class="input-field">
+            <i class="material-icons prefix">comment</i>
+            <input id="icon_telephone" type: "text" placeholder="Comment" name="comment" class="validate active">
+
+        </div>
+        <div class="row">
+            <div class="input-field">
+                <center><input class="btn add-comment-button topnav" type="submit" value="submit"> </center>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col s2"></div>
+    <div class ="col s8">
+        <h5>Comments:</h5>
+        {{#if article.comment}}
+        {{each article.comment}}
+        <div class="card">
+            <p id="nameComment">{{name}}</p>
+            <p>{{body}}</p>
+        </div>
+        {{each}}
+        {{else}}
+        <p>No Comments Yet.</p>
+        {{/if}}
+    </div>
+</div>
+
+
+{{!-- end jessies code from video --}}
+
+
+
+<div class="container-fluid" id="note-container">
+    {{#if notes}}
+    <ul class="list-group">
+        {{#each notes}}
+        <li class="list-group-item">
+            <div class="card" data-id={{_id}}>
+                <div class="card-body primary-color">
+                    <p class="note card-text d-inline white-text font-bold">{{author}}: {{body}}</p>
+                    <a class="note-delete btn btn-sm btn-danger mt-0 float-sm-right" href="#">X</a>
+                </div>
+            </div>
+        </li>
+        {{/each}}
+    </ul>
+    {{else}}
+    <div class="card">
+        <div class="card-body primary-color text-center">
+            <p class="note card-text d-inline white-text font-bold">No notes currently exist. Add the first one!</p>
+        </div>
+    </div>
+    {{/if}}
+    <div class="container border border-secondary mt-2" id="add-note-form" data-id={{id}}>
+        <div class="form-group mt-3">
+            <label for="note-name">Name</label>
+            <textarea class="form-control rounded-0" id="note-name" rows="1"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="note-body">Write your note here</label>
+            <textarea class="form-control rounded-0" id="note-body" rows="5"></textarea>
+        </div>
+    </div>
+</div>
